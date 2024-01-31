@@ -2,7 +2,6 @@
 import {
   Navbar as NextUINavbar,
   NavbarContent,
-  NavbarMenu,
   NavbarBrand,
   NavbarItem,
 } from "@nextui-org/navbar";
@@ -19,7 +18,7 @@ export const Navbar = () => {
   const setEpisodes = useEpisodesStore((state) => state.setEpisodes);
   const [next, setNext] = useState(0);
 
-  const { loading, error, data, fetchMore } = useQuery(GET_EPISODES, {
+  const { data, fetchMore } = useQuery(GET_EPISODES, {
     variables: { page: 1 },
   });
   useEffect(() => {

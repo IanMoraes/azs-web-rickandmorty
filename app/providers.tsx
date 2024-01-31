@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 import client from "@/services/Client";
 export interface ProvidersProps {
 	children: React.ReactNode;
