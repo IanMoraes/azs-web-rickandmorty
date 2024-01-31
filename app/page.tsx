@@ -1,51 +1,81 @@
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code"
-import { button as buttonStyles } from "@nextui-org/theme";
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+"use client";
+
+import LoadingEpisodes from "@/components/LoadingEpisodes";
+import EpisodeCard from "@/components/EpisodeCard";
+import { Episode } from "@/types/Episode";
+import useEpisodesStore from "@/stores/EpisodesStore";
+import {
+  Button,
+  Input,
+  NavbarItem,
+  Tooltip,
+  Navbar as NextUINavbar,
+  NavbarContent,
+} from "@nextui-org/react";
+import { GoHeart, GoHeartFill, GoSearch } from "react-icons/go";
+import { useState } from "react";
 
 export default function Home() {
-	return (
-		<section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-			<div className="inline-block max-w-lg text-center justify-center">
-				<h1 className={title()}>Make&nbsp;</h1>
-				<h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-				<br />
-				<h1 className={title()}>
-					websites regardless of your design experience.
-				</h1>
-				<h2 className={subtitle({ class: "mt-4" })}>
-					Beautiful, fast and modern React UI library.
-				</h2>
-			</div>
+  const episodes = useEpisodesStore((state) => state.episodes);
 
-			<div className="flex gap-3">
-				<Link
-					isExternal
-					href={siteConfig.links.docs}
-					className={buttonStyles({ color: "primary", radius: "full", variant: "shadow" })}
-				>
-					Documentation
-				</Link>
-				<Link
-					isExternal
-					className={buttonStyles({ variant: "bordered", radius: "full" })}
-					href={siteConfig.links.github}
-				>
-					<GithubIcon size={20} />
-					GitHub
-				</Link>
-			</div>
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showFavorites, setShowFavorites] = useState(false);
+  const searchInput = (
+    <Input
+      aria-label="Buscar"
+      labelPlacement="outside"
+      placeholder="Buscar..."
+      startContent={<GoSearch />}
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      type="search"
+    />
+  );
+  const filteredEpisodes = episodes.filter((episode) => {
+    const isFavorite = showFavorites ? episode.favorite : true;
+    const matchesSearch = episode.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return isFavorite && matchesSearch;
+  });
+  const toggleFavorites = () => {
+    setShowFavorites(!showFavorites);
+  };
+  return (
+    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <NextUINavbar  >
+        <NavbarContent className=" basis-full" justify="center">
+          <NavbarItem >{searchInput}</NavbarItem>
 
-			<div className="mt-8">
-				<Snippet hideSymbol hideCopyButton variant="flat">
-					<span>
-						Get started by editing <Code color="primary">app/page.tsx</Code>
-					</span>
-				</Snippet>
-			</div>
-		</section>
-	);
+          <Tooltip content={showFavorites ? "Mostrar todos" : "Mostrar favoritos"}>
+            <NavbarItem className="md:flex">
+              <Button
+                className="text-sm font-normal text-default-600 bg-default-100"
+                startContent={showFavorites ? <GoHeartFill fill="#CF1818" fontSize={20} /> : <GoHeart fontSize={20}/>}
+                variant="flat"
+                onClick={toggleFavorites}
+              >
+                <p className="hidden sm:block">Favoritos</p>
+              </Button>
+            </NavbarItem>
+          </Tooltip>
+        </NavbarContent>
+      </NextUINavbar>
+      {filteredEpisodes.length > 0 && (
+        <div className="flex gap-8 flex-wrap text-center justify-center">
+          {filteredEpisodes.map((episode: Episode) => (
+            <EpisodeCard episode={episode} key={episode.id} />
+          ))}
+        </div>
+      ) }
+      
+      {episodes.length == 0 &&(
+        <div className="flex gap-8 flex-wrap text-center justify-center">
+          {Array(9)
+            .fill(9)
+            .map((_, index) => (
+              <LoadingEpisodes key={index} />
+            ))}
+        </div>
+      )}
+    </section>
+  );
 }

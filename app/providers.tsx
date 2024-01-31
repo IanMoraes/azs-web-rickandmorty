@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import client from "@/services/Client";
 export interface ProvidersProps {
 	children: React.ReactNode;
 	themeProps?: ThemeProviderProps;
@@ -16,7 +18,10 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
 	return (
 		<NextUIProvider navigate={router.push}>
-			<NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+			<NextThemesProvider {...themeProps}>
+				
+  <ApolloProvider client={client}>{children}
+  </ApolloProvider></NextThemesProvider>
 		</NextUIProvider>
 	);
 }

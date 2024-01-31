@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@media (prefers-color-scheme: dark) {
+  
+* {
+    scrollbar-width: auto;
+    scrollbar-color:  #000000 #ffffff;
+    }
+    
+    *::-webkit-scrollbar {
+    width: 8px;
+    }
+    
+    
+    *::-webkit-scrollbar-thumb {
+    background-color: #22c55e;
+    border-radius: 10px;
+    }
+  }
+
+  
